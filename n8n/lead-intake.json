@@ -1,0 +1,66 @@
+{
+  "name": "Lead Intake",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "parameters": {
+        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 15 }] }
+      }
+    },
+    {
+      "id": "2",
+      "name": "Get All Leads",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [460, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:3000/api/get-leads",
+        "responseFormat": "json"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Filter New Leads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300],
+      "parameters": {
+        "jsCode": "const leads = $input.first().json.leads || [];\nreturn leads\n  .filter(l => !l.status || l.status.toLowerCase() === 'new')\n  .map(l => ({ json: l }));"
+      }
+    },
+    {
+      "id": "4",
+      "name": "Split Into Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [900, 300],
+      "parameters": { "batchSize": 1 }
+    },
+    {
+      "id": "5",
+      "name": "Process Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1120, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/process-lead",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ row: $json.row }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Get All Leads", "type": "main", "index": 0 }]] },
+    "Get All Leads":    { "main": [[{ "node": "Filter New Leads", "type": "main", "index": 0 }]] },
+    "Filter New Leads": { "main": [[{ "node": "Split Into Batches", "type": "main", "index": 0 }]] },
+    "Split Into Batches": { "main": [[{ "node": "Process Lead", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

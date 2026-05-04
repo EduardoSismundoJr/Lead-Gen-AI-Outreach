@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lead Generation Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Lead Generation Dashboard</h1>
+
+    <div id="status-msg" class="status-msg hidden"></div>
+
+    <section class="card">
+      <h2>Add Lead</h2>
+      <form id="add-lead-form">
+        <div class="form-row">
+          <input type="text" name="name" placeholder="Full Name" required />
+          <input type="email" name="email" placeholder="Email" required />
+        </div>
+        <div class="form-row">
+          <input type="text" name="company" placeholder="Company" required />
+          <input type="text" name="role" placeholder="Role / Title" />
+        </div>
+        <input type="text" name="linkedin" placeholder="LinkedIn URL" />
+        <button type="submit" class="btn btn-primary">Add Lead</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="table-header">
+        <h2>Leads</h2>
+        <button id="refresh-btn" class="btn btn-secondary">Refresh</button>
+      </div>
+      <div class="table-wrapper">
+        <table id="leads-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Company</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Email Sent</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
